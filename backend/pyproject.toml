@@ -2,13 +2,14 @@
 name = "social-dl-api"
 version = "0.1.0"
 description = "API for Social Downloader"
-authors = ["Alejandro Pérez-Chirinos Rodríguez"]
+authors = ["Alejandro Pérez-Chirinos Rodríguez <a.perez-chirinos@alumnos.upm.es>"]
 license = "MIT"
 
 [tool.poetry.dependencies]
 python = "^3.10"
 fastapi = {extras = ["all"], version = "^0.95.1"}
 fastapi-login = "^1.9.0"
+python-telegram = "^0.18.0"
 
 
 [build-system]

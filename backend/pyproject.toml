@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "social-dl-api"
+name = "social-downloader"
 version = "0.1.0"
 description = "API for Social Downloader"
 authors = ["Alejandro Pérez-Chirinos Rodríguez <a.perez-chirinos@alumnos.upm.es>"]
@@ -10,6 +10,8 @@ python = "^3.10"
 fastapi = {extras = ["all"], version = "^0.95.1"}
 fastapi-login = "^1.9.0"
 python-telegram = "^0.18.0"
+celery = "^5.2.7"
+redis = "^4.5.4"
 
 
 [tool.poetry.group.dev.dependencies]

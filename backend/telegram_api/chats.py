@@ -1,10 +1,10 @@
-from telegram_api.telegram_client import TelegramClient
+from telegram_api.telegram_client import get_client
+
 
 def get_chats() -> dict:
     """Gets Telegram chats"""
 
-    client = TelegramClient()
-    client.login()
+    client = get_client()
 
     result = client.get_chats()
     result.wait()
@@ -14,11 +14,11 @@ def get_chats() -> dict:
 
     return chats
 
+
 def get_chat(chat_id: int):
     """Gets a Telegram chat with its id"""
 
-    client = TelegramClient()
-    client.login()
+    client = get_client()
 
     result = client.get_chat(chat_id)
     result.wait()

@@ -12,6 +12,7 @@ fastapi-login = "^1.9.0"
 python-telegram = "^0.18.0"
 celery = "^5.2.7"
 redis = "^4.5.4"
+pymongo = "^4.3.3"
 
 
 [tool.poetry.group.dev.dependencies]

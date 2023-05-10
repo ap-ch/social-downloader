@@ -53,10 +53,16 @@ class TelegramClient(Telegram):
         state = super().login(blocking=False)
 
         if state == AuthorizationState.WAIT_CODE and code:
-            super().send_code(code)
+            try:
+                super().send_code(code)
+            except RuntimeError:
+                return AuthorizationState.NONE
 
         if state == AuthorizationState.WAIT_PASSWORD and password:
-            super().send_password(password)
+            try:
+                super().send_password(password)
+            except RuntimeError:
+                return AuthorizationState.NONE
 
         return super().login(blocking=False)
 

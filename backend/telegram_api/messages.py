@@ -37,7 +37,7 @@ def get_messages(chat_id: int, limit: int | None = None) -> list[dict]:
         if messages:
             messages_list.extend(messages)
             last_message = messages[-1]
-            time.sleep(0.25)  # little delay to not flood the API
+            time.sleep(0.25)  # little delay to prevent flooding the TDLib API
         else:
             end_of_messages = True
 

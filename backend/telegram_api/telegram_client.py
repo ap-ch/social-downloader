@@ -15,13 +15,26 @@ class TelegramClient(Telegram):
     """
 
     def __init__(self):
-        super().__init__(
-            api_id=os.environ["TELEGRAM_API_ID"],
-            api_hash=os.environ["TELEGRAM_API_HASH"],
-            phone=os.environ["TELEGRAM_PHONE"],
-            database_encryption_key=os.environ["TELEGRAM_DB_KEY"],
-            files_directory=os.environ["TELEGRAM_DIR"],
-        )
+        phone = os.getenv("TELEGRAM_PHONE")
+        bot_token = os.getenv("BOT_TOKEN")
+
+        if phone:
+            super().__init__(
+                api_id=os.environ["TELEGRAM_API_ID"],
+                api_hash=os.environ["TELEGRAM_API_HASH"],
+                phone=phone,
+                database_encryption_key=os.environ["TELEGRAM_DB_KEY"],
+                files_directory=os.environ["TELEGRAM_DIR"],
+            )
+
+        elif bot_token:
+            super().__init__(
+                api_id=os.environ["TELEGRAM_API_ID"],
+                api_hash=os.environ["TELEGRAM_API_HASH"],
+                bot_token=bot_token,
+                database_encryption_key=os.environ["TELEGRAM_DB_KEY"],
+                files_directory=os.environ["TELEGRAM_DIR"],
+            )
 
     def login(
         self, code: str | None = None, password: str | None = None

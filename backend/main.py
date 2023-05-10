@@ -6,6 +6,7 @@ from telegram_api.messages import get_messages
 
 app = FastAPI()
 
+
 @app.get("/")
 async def root():
     return {"message": "Hello World!"}

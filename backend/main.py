@@ -3,6 +3,7 @@ from fastapi import FastAPI, HTTPException
 from telegram_api.telegram_client import TelegramClient, get_client
 from telegram_api.chats import get_chats, get_chat
 from telegram_api.messages import get_messages
+from telegram_api.users import get_me
 
 app = FastAPI()
 
@@ -44,3 +45,8 @@ async def telegram_chat(chat_id: int):
 async def telegram_messages(chat_id: int, limit: int | None = None):
     messages = get_messages(chat_id, limit)
     return messages
+
+@app.get("/telegram/me")
+async def telegram_me():
+    me = get_me()
+    return me

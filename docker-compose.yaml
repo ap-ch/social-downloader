@@ -2,8 +2,9 @@ version: '3.8'
 
 services:
 
-  mongo:
+  db:
     image: mongo
+    container_name: social-downloader-db
     ports:
       - 27017:27017
     restart: always
@@ -14,6 +15,7 @@ services:
   api:
     build: ./backend
     image: social-downloader
+    container_name: social-downloader-api
     ports:
       - 4000:8000
     command: uvicorn main:app --host 0.0.0.0 --reload
@@ -30,6 +32,7 @@ services:
   ui:
     build: ./frontend
     image: social-downloader-ui
+    container_name: social-downloader-ui
     ports:
       - 8000:5173
     command: npm run dev -- --host

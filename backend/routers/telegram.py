@@ -1,52 +1,44 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter
+from celery.result import AsyncResult
+from celery_tasks import telegram_tasks
 
-from telegram_api.telegram_client import TelegramClient, get_client
-from telegram_api.chats import get_chats, get_chat
-from telegram_api.messages import get_messages
-from telegram_api.users import get_me
-
-router = APIRouter()
+router = APIRouter(prefix="/telegram")
 
 
-@router.get("/")
-async def root():
-    return {"message": "Hello World!"}
+@router.get("/login")
+def telegram_login(code: str | None = None, password: str | None = None):
+    result = telegram_tasks.login_task.delay(code, password)
+    return {"task_id": result.id}
 
 
-@router.get("/telegram/login")
-async def telegram_login(code: str | None = None, password: str | None = None):
-    client = get_client(code, password)
-    if isinstance(client, TelegramClient):
-        client.stop()
-        return {"message": "Telegram client was authorized successfully"}
+@router.get("/result")
+def telegram_result(task_id: str):
+    result = AsyncResult(task_id, app=telegram_tasks.app)
+    if not result.ready():
+        return {"task_id": result.id, "status": result.status}
     else:
-        return {"message": "Something went wrong! Telegram client is not authorized"}
+        return {"result": result.get()}
 
 
-@router.get("/telegram/chats")
-async def telegram_chats():
-    chats = get_chats()
-    return chats
+@router.get("/chats")
+def telegram_chats():
+    result = telegram_tasks.get_chats_task.delay()
+    return {"task_id": result.id}
 
 
-@router.get("/telegram/chats/{chat_id}")
-async def telegram_chat(chat_id: int):
-    chat = get_chat(chat_id)
-    if not chat:
-        # TDLib needs to have chats cached before getting a chat
-        _ = get_chats()
-        chat = get_chat(chat_id)
-        if not chat:
-            raise HTTPException(status_code=404, detail="Chat not found")
-    return chat
+@router.get("/chats/{chat_id}")
+def telegram_chat(chat_id: int):
+    result = telegram_tasks.get_chat_task.delay(chat_id)
+    return {"task_id": result.id}
 
 
-@router.get("/telegram/messages/{chat_id}")
-async def telegram_messages(chat_id: int, limit: int | None = None):
-    messages = get_messages(chat_id, limit)
-    return messages
+@router.get("/messages/{chat_id}")
+def telegram_messages(chat_id: int, limit: int | None = None):
+    result = telegram_tasks.get_messages_task.delay(chat_id, limit)
+    return {"task_id": result.id}
 
-@router.get("/telegram/me")
-async def telegram_me():
-    me = get_me()
-    return me
+
+@router.get("/me")
+def telegram_me():
+    result = telegram_tasks.get_me_task.delay()
+    return {"task_id": result.id}

@@ -22,6 +22,4 @@ COPY --from=builder ${VIRTUAL_ENV} ${VIRTUAL_ENV}
 
 WORKDIR /usr/src/app
 
-COPY telegram_api ./telegram_api
-COPY config.py .
-COPY main.py .
+COPY . .

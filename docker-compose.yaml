@@ -11,14 +11,27 @@ services:
     environment:
       - MONGO_INITDB_ROOT_USERNAME=${DB_USER}
       - MONGO_INITDB_ROOT_PASSWORD=${DB_PASS}
+    networks:
+      - social-downloader-net
+
+  rabbitmq:
+    image: rabbitmq:alpine
+    container_name: social-downloader-backend
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq/
+      - rabbitmq_log:/var/log/rabbitmq/
+    networks:
+      - social-downloader-net
       
   api:
     build: ./backend
-    image: social-downloader
+    image: social-downloader-api
     container_name: social-downloader-api
     ports:
       - 4000:8000
-    command: uvicorn main:app --host 0.0.0.0 --reload
+    command: >
+      sh -c "celery -A celery_tasks.telegram_tasks worker --detach --loglevel=INFO &&
+             uvicorn main:app --host 0.0.0.0 --reload"
     volumes:
       - ./backend:/usr/src/app/
       - venv:/usr/src/app/.venv
@@ -28,18 +41,28 @@ services:
       - TELEGRAM_PHONE=${TELEGRAM_PHONE}
       - TELEGRAM_DB_KEY=${TELEGRAM_DB_KEY}
       - TELEGRAM_DIR=${TELEGRAM_DIR}
+    networks:
+      - social-downloader-net
 
-  ui:
+  frontend:
     build: ./frontend
-    image: social-downloader-ui
-    container_name: social-downloader-ui
+    image: social-downloader-frontend
+    container_name: social-downloader-frontend
     ports:
       - 8000:5173
     command: npm run dev -- --host
     volumes:
       - ./frontend:/usr/src/frontend/
       - node_modules:/usr/src/frontend/node_modules
+    networks:
+      - social-downloader-net
 
 volumes:
   venv:
   node_modules:
+  rabbitmq_data:
+  rabbitmq_log:
+
+networks:
+  social-downloader-net:
+    driver: bridge

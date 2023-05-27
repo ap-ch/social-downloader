@@ -8,15 +8,19 @@ services:
     ports:
       - 27017:27017
     restart: always
+    volumes: 
+      - mongo_data:/data/db
+      - ./db_init/mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
     environment:
       - MONGO_INITDB_ROOT_USERNAME=${DB_USER}
       - MONGO_INITDB_ROOT_PASSWORD=${DB_PASS}
+      - MONGO_INITDB_DATABASE=social-downloader
     networks:
       - social-downloader-net
 
   rabbitmq:
     image: rabbitmq:alpine
-    container_name: social-downloader-backend
+    container_name: social-downloader-rabbitmq
     volumes:
       - rabbitmq_data:/var/lib/rabbitmq/
       - rabbitmq_log:/var/log/rabbitmq/
@@ -35,7 +39,11 @@ services:
     volumes:
       - ./backend:/usr/src/app/
       - venv:/usr/src/app/.venv
+      - telegram_cache:${TELEGRAM_DIR}
     environment:
+      - SECRET=${SECRET}
+      - DB_USER=${DB_USER}
+      - DB_PASS=${DB_PASS}
       - TELEGRAM_API_ID=${TELEGRAM_API_ID}
       - TELEGRAM_API_HASH=${TELEGRAM_API_HASH}
       - TELEGRAM_PHONE=${TELEGRAM_PHONE}
@@ -43,6 +51,9 @@ services:
       - TELEGRAM_DIR=${TELEGRAM_DIR}
     networks:
       - social-downloader-net
+    depends_on:
+      - rabbitmq
+      - db
 
   frontend:
     build: ./frontend
@@ -56,13 +67,18 @@ services:
       - node_modules:/usr/src/frontend/node_modules
     networks:
       - social-downloader-net
+    depends_on:
+      - api
+      - rabbitmq
+      - db
 
 volumes:
+  mongo_data:
   venv:
   node_modules:
   rabbitmq_data:
   rabbitmq_log:
+  telegram_cache:
 
 networks:
   social-downloader-net:
-    driver: bridge

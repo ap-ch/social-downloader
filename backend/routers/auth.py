@@ -1,8 +1,6 @@
 from fastapi import APIRouter, Depends
 from fastapi.security import OAuth2PasswordRequestForm
 from fastapi_login.exceptions import InvalidCredentialsException
-from fastapi_login import LoginManager
-from config.settings import settings
 from db.users import get_user
 from security import verify_password, manager
 

@@ -1,7 +1,7 @@
 from fastapi_login import LoginManager
 from config.settings import settings
 
-manager = LoginManager(settings.secret, token_url='/auth/token')
+manager = LoginManager(settings.secret, token_url="/auth/token")
 
 
 def hash_password(plaintext: str):

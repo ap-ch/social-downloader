@@ -1,10 +1,10 @@
 from telegram_api.telegram_client import get_client
 
 
-def get_me() -> dict:
+def get_me(user) -> dict:
     """Gets your Telegram user"""
 
-    client = get_client()
+    client = get_client(user)
 
     result = client.call_method("getMe")
     result.wait()

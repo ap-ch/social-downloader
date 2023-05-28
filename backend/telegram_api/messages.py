@@ -3,7 +3,7 @@ import time
 from telegram_api.telegram_client import get_client
 
 
-def get_messages(chat_id: int, limit: int | None = None) -> list[dict]:
+def get_messages(user, chat_id: int, limit: int | None = None) -> list[dict]:
     """Handles Telegram chat history pagination and returns N messages.
 
     Args:
@@ -15,7 +15,7 @@ def get_messages(chat_id: int, limit: int | None = None) -> list[dict]:
 
     """
 
-    client = get_client()
+    client = get_client(user)
 
     messages_list = []
 

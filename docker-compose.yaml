@@ -34,7 +34,7 @@ services:
     ports:
       - 4000:8000
     command: >
-      sh -c "celery -A celery_tasks.telegram_tasks worker --detach --loglevel=INFO &&
+      sh -c "celery -A celery_tasks.telegram_tasks worker --detach --loglevel=INFO --time-limit=86400 &&
              uvicorn main:app --host 0.0.0.0 --reload"
     volumes:
       - ./backend:/usr/src/app/
@@ -46,7 +46,6 @@ services:
       - DB_PASS=${DB_PASS}
       - TELEGRAM_API_ID=${TELEGRAM_API_ID}
       - TELEGRAM_API_HASH=${TELEGRAM_API_HASH}
-      - TELEGRAM_PHONE=${TELEGRAM_PHONE}
       - TELEGRAM_DB_KEY=${TELEGRAM_DB_KEY}
       - TELEGRAM_DIR=${TELEGRAM_DIR}
     networks:

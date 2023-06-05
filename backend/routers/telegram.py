@@ -1,8 +1,7 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Security
 from fastapi.responses import ORJSONResponse
 from celery.result import AsyncResult
 from celery_tasks import telegram_tasks
-from db.preferences import get_user_preferences
 from db.tasks import save_task
 from db.results import save_result, get_result
 from security import manager
@@ -11,7 +10,7 @@ router = APIRouter(prefix="/telegram")
 
 
 @router.get("/result", response_class=ORJSONResponse)
-def telegram_result(task_id: str, user=Depends(manager)):
+def telegram_result(task_id: str, user=Security(manager, scopes=["auth"])):
     # Check first if result is stored in the database
     result_value = get_result(task_id, user)
     if not result_value:
@@ -27,7 +26,7 @@ def telegram_result(task_id: str, user=Depends(manager)):
 
 @router.get("/login")
 def telegram_login(
-    user=Depends(manager),
+    user=Security(manager, scopes=["auth"]),
     code: str | None = None,
     password: str | None = None
 ):
@@ -36,7 +35,7 @@ def telegram_login(
 
 
 @router.get("/chats")
-def telegram_chats(user=Depends(manager)):
+def telegram_chats(user=Security(manager, scopes=["auth"])):
     result = telegram_tasks.get_chats_task.delay(user)
     save_task(
         result.id,
@@ -48,7 +47,7 @@ def telegram_chats(user=Depends(manager)):
 
 
 @router.get("/chats/{chat_id}")
-def telegram_chat(chat_id: int, user=Depends(manager)):
+def telegram_chat(chat_id: int, user=Security(manager, scopes=["auth"])):
     result = telegram_tasks.get_chat_task.delay(user, chat_id)
     save_task(
         result.id,
@@ -60,7 +59,7 @@ def telegram_chat(chat_id: int, user=Depends(manager)):
 
 
 @router.get("/messages/{chat_id}")
-def telegram_messages(chat_id: int, user=Depends(manager), limit: int | None = None):
+def telegram_messages(chat_id: int, user=Security(manager, scopes=["auth"]), limit: int | None = None):
     result = telegram_tasks.get_messages_task.delay(user, chat_id, limit)
     save_task(
         result.id,
@@ -72,7 +71,7 @@ def telegram_messages(chat_id: int, user=Depends(manager), limit: int | None = N
 
 
 @router.get("/me")
-def telegram_me(user=Depends(manager)):
+def telegram_me(user=Security(manager, scopes=["auth"])):
     result = telegram_tasks.get_me_task.delay(user)
     save_task(
         result.id,

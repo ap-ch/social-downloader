@@ -1,59 +1,38 @@
-<script>
-	import Counter from './Counter.svelte';
-	import welcome from '$lib/images/svelte-welcome.webp';
-	import welcome_fallback from '$lib/images/svelte-welcome.png';
+<script lang="ts">
+	import type { PageServerData } from './$types';
+	export let data: PageServerData;
+
+	let user_info: any = null;
+
+	if (data != null) {
+		user_info = data["user_info"];
+	}
 </script>
 
 <svelte:head>
 	<title>Home</title>
-	<meta name="description" content="Svelte demo app" />
 </svelte:head>
 
-<section>
-	<h1>
-		<span class="welcome">
-			<picture>
-				<source srcset={welcome} type="image/webp" />
-				<img src={welcome_fallback} alt="Welcome" />
-			</picture>
-		</span>
+<div class="text-center">
+	{#if user_info == null}
+		<div class="container my-5">
+			<div class="p-5 text-center bg-body-tertiary rounded-3">
+			<h1 class="text-body-emphasis">Social Downloader</h1>
+			<p class="col-lg-8 mx-auto fs-5 text-muted">
+				Easily download content from multiple social networks
+			</p>
+			<div class="d-inline-flex gap-2 mb-5">
+				<a href="/signup" class="d-inline-flex align-items-center btn btn-primary btn-lg px-4 rounded-pill" type="button">
+				Create an account
+				</a>
+				<a href="/login" class="btn btn-outline-secondary btn-lg px-4 rounded-pill" type="button">
+				Log in
+				</a>
+			</div>
+			</div>
+		</div>
+	{:else}
+		<h1>Social Downloader</h1>
+	{/if}
+</div>
 
-		to your new<br />SvelteKit app
-	</h1>
-
-	<h2>
-		try editing <strong>src/routes/+page.svelte</strong>
-	</h2>
-
-	<Counter />
-</section>
-
-<style>
-	section {
-		display: flex;
-		flex-direction: column;
-		justify-content: center;
-		align-items: center;
-		flex: 0.6;
-	}
-
-	h1 {
-		width: 100%;
-	}
-
-	.welcome {
-		display: block;
-		position: relative;
-		width: 100%;
-		height: 0;
-		padding: 0 0 calc(100% * 495 / 2048) 0;
-	}
-
-	.welcome img {
-		position: absolute;
-		width: 100%;
-		height: 100%;
-		top: 0;
-		display: block;
-	}
-</style>

@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Security
 from fastapi.exceptions import HTTPException
 from db.preferences import (
     set_telegram_phone,
@@ -14,7 +14,7 @@ router = APIRouter(prefix="/preferences")
 def set_preferences_telegram_login(
     phone: str | None = None, 
     bot_token: str | None = None,
-    user=Depends(manager)
+    user=Security(manager, scopes=["auth"])
 ):
     try:
         if phone:

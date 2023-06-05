@@ -4,6 +4,8 @@ WORKDIR /usr/src/frontend
 
 COPY . ./
 
+ENV SECRET=
+
 RUN npm ci
 
 RUN npm run build

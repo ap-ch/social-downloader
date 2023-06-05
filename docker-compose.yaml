@@ -59,11 +59,13 @@ services:
     image: social-downloader-frontend
     container_name: social-downloader-frontend
     ports:
-      - 8000:5173
+      - 80:5173
     command: npm run dev -- --host
     volumes:
       - ./frontend:/usr/src/frontend/
       - node_modules:/usr/src/frontend/node_modules
+    environment:
+      - SECRET=${SECRET}
     networks:
       - social-downloader-net
     depends_on:

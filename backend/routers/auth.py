@@ -49,7 +49,8 @@ async def refresh(user=Security(manager, scopes=["refresh"])):
     
     access_token = manager.create_access_token(
         data=dict(sub=user["email"]),
-        expires=settings.access_token_expiration
+        expires=settings.access_token_expiration,
+        scopes=["auth"]
     )
 
     return {

@@ -1,3 +1,3 @@
-<footer class="text-center fixed-bottom mt-3">
-    <p>Alejandro Pérez-Chirinos Rodríguez, 2023</p>
+<footer class="container-fluid bg-light text-center fixed-bottom p-3">
+    <span>Alejandro Pérez-Chirinos Rodríguez, 2023</span>
 </footer>

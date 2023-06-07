@@ -1,0 +1,68 @@
+
+services:
+  telegram:
+    name: Telegram
+    description: >
+      Service that wraps the TDLib library to let you easily download content directly
+      from your Telegram account.
+    icon: telegram
+    prefix: /telegram
+    authentication:
+      - phone_auth:
+          path: /login_phone
+          parameters:
+            phone:
+              name: Phone Number (with prefix)
+              type: string
+              required: true
+          2fa: true
+      - bot_token_auth:
+          path: /login_bot
+          parameters:
+            bot_token:
+              name: Bot Token
+              type: string
+              required: true
+    features:
+      - chats:
+          name: Chats
+          description: >
+            Gets all chats from your Telegram account.
+          path: /chats
+      - chat:
+          name: Chat
+          description: >
+            Gets details from a chat.
+          path: /chat
+          parameters:
+            chat_id:
+              name: Chat ID
+              type: string
+              required: true
+      - messages:
+          name: Messages
+          description: >
+            Get messages from a chat.
+          path: /messages
+          parameters:
+            chat_id:
+              name: Chat ID
+              type: string
+              required: true
+      - me:
+          name: Me
+          description: >
+            Get your account details.
+          path: /me
+  test-service:
+    name: Reddit
+    description: >
+      Example service, not a real service.
+    icon: reddit
+    prefix: /test-service
+    features:
+      - chats:
+          name: Test
+          description: >
+            Example.
+          path: /test

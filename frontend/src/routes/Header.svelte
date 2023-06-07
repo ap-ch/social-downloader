@@ -16,9 +16,7 @@
         <ul class="navbar-nav me-auto mb-2 mb-xl-0"></ul>
         <ul class="navbar-nav ml-auto">
           {#if user_info != null}
-            <li class="nav-item">
-              <p class="navbar-text" style="margin-right: 8px">Welcome, {user_info["email"]}</p> 
-            </li>
+            <span class="navbar-text" style="margin-right: 8px">Welcome, {user_info["email"]}</span> 
           {/if}
           <li class="nav-item">
             {#if user_info == null}

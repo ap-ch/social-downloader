@@ -11,12 +11,10 @@
 	}
 </script>
 
-<div>
+<div class="app">
 	<Header user_info={user_info}/>
-
 	<main>
 		<slot/>
 	</main>
-
 	<Footer/>
 </div>

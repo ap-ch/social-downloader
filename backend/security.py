@@ -20,7 +20,7 @@ def hash_password(plaintext: str):
 
 
 def verify_password(plaintext: str, hashed: str):
-    """Checks the plaintext password against the provided hashed password
+    """Checks the plaintext password against the provided hashed password.
 
     Args:
         plaintext: The password as provided by the user.

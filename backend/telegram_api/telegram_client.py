@@ -90,21 +90,24 @@ def get_client(
 
     Returns:
         A Telegram client to make requests.
-
-    Raises:
-        HTTPException(403): In case login needs further authentication.
-
     """
 
-    try:
-        telegram_prefs = get_user_preferences(user)["telegram_login"]
-    except (TypeError, KeyError):
-        raise HTTPException(status_code=400, detail="User does not have preferences defined")
+    user_prefs = get_user_preferences(user)
+
+    print(user_prefs)
+
+    if not user_prefs:
+        raise HTTPException(status_code=403, detail="Could not get Telegram client")
+    elif "telegram_login" not in user_prefs:
+        raise HTTPException(status_code=403, detail="Could not get Telegram client")
+    
+    telegram_prefs = user_prefs["telegram_login"]
 
     try:
         client = TelegramClient(telegram_prefs)
     except:
-        raise HTTPException(status_code=400, detail="Could not get Telegram client")
+        raise HTTPException(status_code=403, detail="Could not get Telegram client")
+    
     state = client.login(code, password)
 
     if state == AuthorizationState.WAIT_CODE:

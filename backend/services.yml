@@ -9,7 +9,8 @@ services:
     prefix: /telegram
     authentication:
       - phone_auth:
-          path: /login_phone
+          name: Phone Number
+          path: /login
           parameters:
             phone:
               name: Phone Number (with prefix)
@@ -17,7 +18,8 @@ services:
               required: true
           2fa: true
       - bot_token_auth:
-          path: /login_bot
+          name: Bot Token
+          path: /login
           parameters:
             bot_token:
               name: Bot Token
@@ -33,7 +35,7 @@ services:
           name: Chat
           description: >
             Gets details from a chat.
-          path: /chat
+          path: /chats/{chat_id}
           parameters:
             chat_id:
               name: Chat ID
@@ -43,12 +45,16 @@ services:
           name: Messages
           description: >
             Get messages from a chat.
-          path: /messages
+          path: /messages/{chat_id}
           parameters:
             chat_id:
               name: Chat ID
               type: string
               required: true
+            limit:
+              name: Number of Messages
+              type: string
+              required: false
       - me:
           name: Me
           description: >

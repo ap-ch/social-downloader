@@ -8,7 +8,7 @@ from security import manager
 router = APIRouter(prefix="/results")
 
 
-@router.get("/telegram", response_class=ORJSONResponse)
+@router.get("/telegram/{task_id}", response_class=ORJSONResponse)
 def result_telegram(task_id: str, user=Security(manager, scopes=["auth"])):
     # Check first if result is stored in the database
     result_value = get_result(task_id, user)

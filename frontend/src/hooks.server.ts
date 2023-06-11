@@ -4,6 +4,8 @@ import * as jwt from 'jsonwebtoken';
 import { SECRET } from '$env/static/private';
 import { getNewAccessToken, logOut } from '$lib/server/helpers.js';
 
+import { userInfo } from "./routes/stores";
+
 export const handle = (async ({ event, resolve }) => {
 
   const cookies = event.cookies;
@@ -12,9 +14,21 @@ export const handle = (async ({ event, resolve }) => {
 
   const secret: jwt.Secret = SECRET;
 
+  let userInfoValue: any;
+
+  userInfo.subscribe(value => {
+		userInfoValue = value;
+	});
+
   if (event.url.pathname.startsWith("/logout")) {
     logOut(cookies);
     throw redirect(302, '/');
+  }
+
+  if (event.url.pathname.startsWith("/login") || event.url.pathname.startsWith("/signup")) {
+    if (userInfoValue != null) {
+      throw redirect(302, '/');
+    }
   }
 
   if (access_token != null && refresh_token != null) {
@@ -55,7 +69,6 @@ export const handle = (async ({ event, resolve }) => {
 }) satisfies Handle;
 
 export const handleFetch = (async ({ event, request, fetch }) => {
-
   const cookies = event.cookies;
   const access_token = cookies.get("access_token")
 

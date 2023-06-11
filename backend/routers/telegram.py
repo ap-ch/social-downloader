@@ -1,27 +1,10 @@
 from fastapi import APIRouter, Security
-from fastapi.responses import ORJSONResponse
-from celery.result import AsyncResult
+from models.telegram import MessagesIn
 from celery_tasks import telegram_tasks
 from db.tasks import save_task
-from db.results import save_result, get_result
 from security import manager
 
 router = APIRouter(prefix="/telegram")
-
-
-@router.get("/result", response_class=ORJSONResponse)
-def telegram_result(task_id: str, user=Security(manager, scopes=["auth"])):
-    # Check first if result is stored in the database
-    result_value = get_result(task_id, user)
-    if not result_value:
-        # If not, query Celery
-        result = AsyncResult(task_id, app=telegram_tasks.app)
-        if not result.ready():
-            return {"task_id": result.id, "status": result.status}
-        else:
-            result_value = result.get()
-            save_result(task_id, result_value, user)   
-    return ORJSONResponse({"result": result_value})
 
 
 @router.get("/login")
@@ -59,7 +42,7 @@ def telegram_chat(chat_id: int, user=Security(manager, scopes=["auth"])):
 
 
 @router.get("/messages/{chat_id}")
-def telegram_messages(chat_id: int, user=Security(manager, scopes=["auth"]), limit: int | None = None):
+def telegram_messages(chat_id: int, user=Security(manager, scopes=["auth"]), limit: MessagesIn | None = None):
     result = telegram_tasks.get_messages_task.delay(user, chat_id, limit)
     save_task(
         result.id,

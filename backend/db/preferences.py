@@ -2,7 +2,10 @@ from bson.objectid import ObjectId
 from db.db import db
 
 def get_user_preferences(user) -> dict:
-    return db["preferences"].find_one({"user_id": ObjectId(user["id"])}, {"_id": 0})
+    return db["preferences"].find_one(
+        {"user_id": ObjectId(user["id"])}, 
+        {"_id": 0, "user_id": 0}
+    )
 
 def set_telegram_phone(telegram_phone: str, user):
     db["preferences"].update_one(

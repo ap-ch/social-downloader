@@ -131,7 +131,7 @@
 		const formData = new FormData(event.target);
 		const verificationCode = Object.fromEntries(formData.entries()).code;
 		let auth_method_path = getAuthMethodPath(getAuthMethod(selectedAuthMethod));
-		const params = `?res=/${selectedServiceValue}${auth_method_path}?code=${verificationCode}`
+		const params = `?res=/${selectedServiceValue}${auth_method_path}&code=${verificationCode}`
 		const response = await fetch(`/api/redirect-server${params}`,
 			{
 				method: "get"
@@ -152,8 +152,6 @@
         });
         dialog.showModal();
     }
-
-	$: console.log(authentication)
 </script>
 
 <!-- svelte-ignore a11y-click-events-have-key-events -->

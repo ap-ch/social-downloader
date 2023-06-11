@@ -40,6 +40,9 @@ export async function GET(event: any) {
 	const access_token = event.cookies.get("access_token");
 	event.request.headers.set('Authorization', `Bearer ${access_token}`);
 
+	console.log(res)
+	console.log(params)
+
 	let response = await fetch(`http://api:8000${res}${params}`, {
 		method: "get",
 		headers: event.request.headers

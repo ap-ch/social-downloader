@@ -94,8 +94,6 @@ def get_client(
 
     user_prefs = get_user_preferences(user)
 
-    print(user_prefs)
-
     if not user_prefs:
         raise HTTPException(status_code=403, detail="Could not get Telegram client")
     elif "telegram_login" not in user_prefs:
@@ -113,19 +111,21 @@ def get_client(
     if state == AuthorizationState.WAIT_CODE:
         client.stop()
         raise HTTPException(
-            403,
-            "Verification code sent. It is needed to complete Telegram authorization",
+            status_code=200,
+            detail="Verification code sent. It is needed to complete Telegram authorization",
         )
 
     if state == AuthorizationState.WAIT_PASSWORD:
         client.stop()
         raise HTTPException(
-            403,
-            "Password is needed to complete Telegram authorization"
+            status_code=403,
+            detail="Password is needed to complete Telegram authorization"
         )
 
     if state != AuthorizationState.READY:
         client.stop()
-        raise HTTPException(403, "Unauthorized Telegram client")
+        raise HTTPException(
+            status_code=403, 
+            detail="Unauthorized Telegram client")
 
     return client

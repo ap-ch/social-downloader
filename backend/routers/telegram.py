@@ -1,4 +1,5 @@
 from fastapi import APIRouter, Security
+from telegram_api import telegram_client
 from models.telegram import MessagesIn
 from celery_tasks import telegram_tasks
 from db.tasks import save_task
@@ -13,8 +14,12 @@ def telegram_login(
     code: str | None = None,
     password: str | None = None
 ):
-    result = telegram_tasks.login_task.delay(user, code, password)
-    return {"task_id": result.id}
+    client = telegram_client.get_client(user, code, password)
+    if isinstance(client, telegram_client.TelegramClient):
+        client.stop()
+        return {"message": "Telegram client was authorized successfully"}
+    else:
+        return {"message": "Something went wrong! Telegram client is not authorized"}
 
 
 @router.get("/chats")

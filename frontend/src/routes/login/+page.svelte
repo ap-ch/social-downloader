@@ -3,7 +3,7 @@
 </svelte:head>
 
 <div class="d-flex align-items-center py-4 bg-body-tertiary">
-    <div class="form-signin w-30 m-auto">
+    <div class="w-30 m-auto">
         <form action="?/login" method="POST"> 
             <h1 class="h3 mb-3 fw-normal">Log in</h1>
 

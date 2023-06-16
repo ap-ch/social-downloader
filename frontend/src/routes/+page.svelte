@@ -4,8 +4,9 @@
 	import RightColumn from './RightColumn.svelte';
 	import ModalAuth from './ModalAuth.svelte';
 
-	import { userInfo, services, selectedService, okShowAuthModal, okShowFeatureModal, userPrefs} from './stores';
+	import { userInfo, services, selectedService, okShowAuthModal, okShowFeatureModal, userPrefs, selectedFeatureName} from './stores';
 	import type { PageServerData } from './$types';
+    import ModalFeature from './ModalFeature.svelte';
 	export let data: PageServerData;
 
 	if (data != null) {
@@ -17,8 +18,10 @@
 	let userInfoValue: any;
 	let servicesValue: any;
 	let selectedServiceValue: any;
+	let selectedFeatureNameValue: any;
 
 	let okShowAuthModalValue: any
+	let okShowFeatureModalValue: any
 
 	userInfo.subscribe(value => {
 		userInfoValue = value;
@@ -32,8 +35,16 @@
 		selectedServiceValue = value;
 	});
 
+	selectedFeatureName.subscribe(value => {
+		selectedFeatureNameValue = value;
+	});
+
 	okShowAuthModal.subscribe(value => {
 		okShowAuthModalValue = value;
+	});
+
+	okShowFeatureModal.subscribe(value => {
+		okShowFeatureModalValue = value;
 	});
 
 	const getServiceAuthentication = (service: string) => {
@@ -47,6 +58,31 @@
             }
         }
     }
+
+	let serviceFeatures: any;
+
+	$: serviceFeatures = getServiceFeatures(selectedServiceValue);
+
+	const getServiceFeatures = (service: string) => {
+		let serviceFeatures: any = null;
+		if (servicesValue && service) {
+			serviceFeatures = servicesValue[service].features;
+		}
+		return serviceFeatures;
+    };
+
+    const getServiceFeature = (feature: string) => {
+		let serviceFeature: any;
+		if (serviceFeatures != null) {
+			for (var i = 0; i < serviceFeatures.length; i++) {
+				if (Object.keys(serviceFeatures[i]).includes(feature)) {
+					serviceFeature = serviceFeatures[i][feature];
+				}
+			}
+		}
+		return serviceFeature;
+    }
+
 </script>
 
 <svelte:head>
@@ -77,6 +113,9 @@
 {:else}
 	{#if okShowAuthModalValue}
 		<ModalAuth authentication={getServiceAuthentication(selectedServiceValue)}/>
+	{/if}
+	{#if okShowFeatureModal && serviceFeatures}
+		<ModalFeature selectedFeature={getServiceFeature(selectedFeatureNameValue)}/>
 	{/if}
 	<div style="background-color: #edededed; height: 90vh;">
 		<div class="container py-3">

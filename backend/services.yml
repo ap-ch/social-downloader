@@ -26,16 +26,16 @@ services:
               type: string
               required: true
     features:
-      - chats:
+      - chats_name:
           name: Chats
           description: >
-            Gets all chats from your Telegram account.
-          path: /chats
+            Gets all your chats from your Telegram account.
+          path: /chats-name
       - chat:
           name: Chat
           description: >
             Gets details from a chat.
-          path: /chats/{chat_id}
+          path: /chat
           parameters:
             chat_id:
               name: Chat ID
@@ -45,11 +45,11 @@ services:
           name: Messages
           description: >
             Get messages from a chat.
-          path: /messages/{chat_id}
+          path: /messages
           parameters:
             chat_id:
               name: Chat ID
-              type: string
+              type: int
               required: true
             limit:
               name: Number of Messages
@@ -60,6 +60,35 @@ services:
           description: >
             Get your account details.
           path: /me
+      - search_public_chats_name:
+          name: Search Public Chats
+          description: >
+            Searches public chats querying a keyword to be found in their username or title.
+          path: /search-public-chats-name
+          parameters:
+            query:
+              name: Query
+              type: string
+              required: true
+      - chats:
+          name: Chats
+          detail: Only ID's
+          description: >
+            Extracted as is from the TDLib API.
+            Gets all your chats ID's from your Telegram account.
+          path: /chats
+      - search_public_chats:
+          name: Search Public Chats
+          detail: Only ID's
+          description: >
+            Extracted as is from the TDLib API.
+            Searches public chats ID's querying a keyword to be found in their username or title.
+          path: /search-public-chats
+          parameters:
+            query:
+              name: Query
+              type: string
+              required: true
   test-service:
     name: Reddit
     description: >

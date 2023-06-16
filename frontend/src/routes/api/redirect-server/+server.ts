@@ -1,7 +1,7 @@
 // /api/redirect-server POST
 
 export async function POST(event: any) {
-	const res = event.url.href.split("=")[1].split("&")[0];
+	let res = event.url.href.split("=")[1].split("&")[0];
 	let params;
 	if (event.url.href.includes("&")) {
 		params = "?" + event.url.href.replace(event.url.href.split("&")[0]+"&", "");
@@ -10,17 +10,17 @@ export async function POST(event: any) {
 		params = "";
 	}
 
-	const access_token = event.cookies.get("access_token");
+	let access_token = event.cookies.get("access_token");
 	event.request.headers.set('Authorization', `Bearer ${access_token}`);
 
-	const options = {
+	let options = {
 		method: "post",
 		headers: event.request.headers,
 		body: event.request.body,
 		duplex: "half"
 	}
 
-	const response = await fetch(`http://api:8000${res}${params}`, options);
+	let response = await fetch(`http://api:8000${res}${params}`, options);
 
 	return response	
 }

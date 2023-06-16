@@ -1,9 +1,10 @@
 <script lang="ts">
-	import { userInfo, services, selectedService } from './stores';
+	import { userInfo, services, selectedService, selectedFeatureName, okShowFeatureModal} from './stores';
 
     let userInfoValue: any;
 	let servicesValue: any;
 	let selectedServiceValue: any;
+    let selectedFeatureNameValue: any;
 
 	userInfo.subscribe(value => {
 		userInfoValue = value;
@@ -17,9 +18,32 @@
 		selectedServiceValue = value;
 	});
 
+    selectedFeatureName.subscribe(value => {
+		selectedFeatureNameValue = value;
+	});
+
+    const getFeatureDetail = (feature: any) => {
+		let detail: any = "";
+		try {
+            let detailText: any;
+            detailText = feature[Object.keys(feature)[0]].detail;
+            if (detailText) {
+                detail = detailText;
+            }
+		}
+		finally {
+			return detail
+		}
+    }
+
     const getServiceFeatures = (service: string) => {
         return servicesValue[service].features
     };
+
+    const setSelectedFeature = (featureName: string) => {
+        selectedFeatureName.set(featureName);
+        okShowFeatureModal.set(true);
+    }
 </script>
 
 <div class="col-3 g-0">
@@ -29,13 +53,15 @@
         </div>
         <div class="container-fluid scrollable" style="height: 95%;">
             {#if servicesValue != null && selectedServiceValue != ""}
-                {#each getServiceFeatures(selectedServiceValue) as feature}
-                    <div class="row">
-                        <div class="container-fluid p-3 btn btn-outline-primary" style="margin-bottom: 8px; text-align: left;">
-                            <h5 style="margin-bottom: 0px;"><span>{feature[Object.keys(feature)[0]].name}<span></span></h5>
+                {#key selectedServiceValue}
+                    {#each getServiceFeatures(selectedServiceValue) as feature}
+                        <div class="row">
+                            <button class="container-fluid p-3 btn btn-outline-primary" on:click={() => {setSelectedFeature(Object.keys(feature)[0]) ;return false;}} style="margin-bottom: 8px; text-align: left;">
+                                <h5 style="margin-bottom: 0px;"><span>{feature[Object.keys(feature)[0]].name}</span> <small class="opacity-75">{getFeatureDetail(feature)}</small></h5>
+                            </button>
                         </div>
-                    </div>
-                {/each}
+                    {/each}
+                {/key}
             {/if}
         </div>
     </div>

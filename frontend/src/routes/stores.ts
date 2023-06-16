@@ -5,6 +5,7 @@ export let userPrefs = writable(null)
 export let serviceTasks = writable(null)
 export let services = writable(null);
 export let selectedService = writable("");
+export let selectedFeatureName = writable("");
 
 export let okShowAuthModal = writable(true)
 export let okCloseAuthModal = writable(true)

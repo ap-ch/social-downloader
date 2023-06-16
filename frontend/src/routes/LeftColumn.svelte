@@ -1,15 +1,11 @@
 <script lang="ts">
-    import { userInfo, services, selectedService } from './stores';
+    import { userInfo, services, selectedService, userPrefs } from './stores';
 
-    let userInfoValue: any;
     let servicesValue: any;
     let serviceEntries: any;
     let selectedServiceValue: any;
-
-    userInfo.subscribe(value => {
-        userInfoValue = value;
-    });
-
+    let userPrefsValue: any;
+    
     services.subscribe((value: any) => {
         servicesValue = value;
         serviceEntries = Object.entries(value);
@@ -19,17 +15,26 @@
         selectedServiceValue = value;
     });
 
+    userPrefs.subscribe(value => {
+        userPrefsValue = value;
+    });
+
     const setSelectedService = (service: string) => {
-		selectedService.set(service);
-		let serviceButtons;
-		serviceButtons = document.getElementsByClassName("service-button");
-		for (let serviceButton of serviceButtons) {
-			serviceButton.classList.remove('btn-primary');
-			serviceButton.classList.remove('text-white');
-			serviceButton.classList.add('btn-outline-primary');
-		}
-		document.getElementById(`${service}-button`)?.classList.add('btn-primary');
-		document.getElementById(`${service}-button`)?.classList.add('text-white');
+        if (servicesValue) {
+            selectedService.set(service);
+            let serviceButtons;
+            serviceButtons = document.getElementsByClassName("service-button");
+            if (serviceButtons) {
+                for (let serviceButton of serviceButtons) {
+                    serviceButton.classList.remove('btn-primary');
+                    serviceButton.classList.remove('text-white');
+                    serviceButton.classList.add('btn-outline-primary');
+                }
+                document.getElementById(`${service}-button`)?.classList.add('btn-primary');
+                document.getElementById(`${service}-button`)?.classList.add('text-white');
+            }
+        }
+
 	};
 
     const getServiceAuthentication = (service: string) => {
@@ -45,6 +50,7 @@
     }
 </script>
 
+{#if userInfo && servicesValue}
 <div class="col-3 g-0" style="padding-right: 2vh">
     <div class="p-3 bg-light rounded shadow-sm" style="height: 70vh;">
         <div class="row">
@@ -60,20 +66,29 @@
             {/each}
         </div>
     </div>
-    {#if getServiceAuthentication(selectedServiceValue) != null}
-        <div class="bg-light rounded shadow-sm" style="height: 8vh; margin-top: 2vh;">
-            <button class="container-fluid p-3 btn btn-outline-primary shadow-sm text-center" on:click={() => {}} style="text-align: left; height: 100%;">
-                <h5 style="margin-bottom: 0px;"><i class="bi bi-key" style="margin-right: 8px"></i><span>Service Authentication<span></span></h5>
-            </button>
-        </div>
+    {#if getServiceAuthentication(selectedServiceValue)}
+        {#if (userPrefsValue == null || !(`${selectedServiceValue}_login` in userPrefsValue))}
+            <div class="bg-light rounded shadow-sm" style="height: 8vh; margin-top: 2vh;">
+                <button class="container-fluid p-3 btn btn-outline-primary shadow-sm text-center" on:click={() => {}} style="text-align: left; height: 100%;">
+                    <h5 style="margin-bottom: 0px;"><span>Service needs authentication<span></span></h5>
+                </button>
+            </div>
+        {:else}
+            <div class="bg-light rounded shadow-sm" style="height: 8vh; margin-top: 2vh;">
+                <button class="container-fluid p-3 btn btn-outline-primary shadow-sm text-center" on:click={() => {}} style="text-align: left; height: 100%;">
+                    <h5 style="margin-bottom: 0px;"><i class="bi bi-door-open" style="margin-right: 8px"></i><span>Log out Service<span></span></h5>
+                </button>
+            </div>
+        {/if}
     {:else}
         <div class="bg-light rounded shadow-sm" style="height: 8vh; margin-top: 2vh;">
             <button disabled class="container-fluid p-3 btn btn-disabled shadow-sm text-center" on:click={() => {}} style="text-align: left; height: 100%;">
-                <h5 style="margin-bottom: 0px;"><i class="bi bi-key" style="margin-right: 8px"></i><span>Service Authentication<span></span></h5>
+                <h5 style="margin-bottom: 0px;"><i class="bi bi-door-closed" style="margin-right: 8px"></i><span>No Log in needed<span></span></h5>
             </button>
         </div>
     {/if}
 </div>
+{/if}
 
 <style>
     .scrollable {

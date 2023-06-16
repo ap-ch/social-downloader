@@ -34,7 +34,19 @@ def telegram_chats(user=Security(manager, scopes=["auth"])):
     return {"task_id": result.id}
 
 
-@router.get("/chats/{chat_id}")
+@router.get("/chats-name")
+def telegram_chats_name(user=Security(manager, scopes=["auth"])):
+    result = telegram_tasks.get_chats_name_task.delay(user)
+    save_task(
+        result.id,
+        "telegram",
+        "chats_name",
+        user
+    )
+    return {"task_id": result.id}
+
+
+@router.get("/chat")
 def telegram_chat(chat_id: int, user=Security(manager, scopes=["auth"])):
     result = telegram_tasks.get_chat_task.delay(user, chat_id)
     save_task(
@@ -46,8 +58,36 @@ def telegram_chat(chat_id: int, user=Security(manager, scopes=["auth"])):
     return {"task_id": result.id}
 
 
-@router.get("/messages/{chat_id}")
-def telegram_messages(chat_id: int, user=Security(manager, scopes=["auth"]), limit: MessagesIn | None = None):
+@router.get("/search-public-chats")
+def telegram_search_public_chats(query: str, user=Security(manager, scopes=["auth"])):
+    result = telegram_tasks.search_public_chats_task.delay(user, query)
+    save_task(
+        result.id,
+        "telegram",
+        "search-public-chats",
+        user
+    )
+    return {"task_id": result.id}
+
+
+@router.get("/search-public-chats-name")
+def telegram_search_public_chats_name(query: str, user=Security(manager, scopes=["auth"])):
+    result = telegram_tasks.search_public_chats_name_task.delay(user, query)
+    save_task(
+        result.id,
+        "telegram",
+        "search-public-chats-name",
+        user
+    )
+    return {"task_id": result.id}
+
+
+@router.get("/messages")
+def telegram_messages(
+    chat_id: int, 
+    limit: int | None = None,
+    user=Security(manager, scopes=["auth"])
+):
     result = telegram_tasks.get_messages_task.delay(user, chat_id, limit)
     save_task(
         result.id,

@@ -1,59 +1,46 @@
 import config.celery_config as celery_config
-from fastapi.exceptions import HTTPException
 from celery import Celery
-from telegram_api import telegram_client, chats, messages, users
+from telegram_api import chats, messages, users
 
 app = Celery(__name__, broker=celery_config.broker_url)
 app.conf.update(result_backend=celery_config.result_backend)
 
 
-""" @app.task(name="telegram:login")
-def login_task(
-    user,
-    code: str | None = None,
-    password: str | None = None
-):
-    
-    client = telegram_client.get_client(user, code, password)
-    if isinstance(client, telegram_client.TelegramClient):
-        client.stop()
-        return {"message": "Telegram client was authorized successfully"}
-    else:
-        return {"message": "Something went wrong! Telegram client is not authorized"} """
-
-
-@app.task(name="telegram:get_chats")
+@app.task(name="telegram:get_chats", max_retries=5)
 def get_chats_task(user):
-    try:
-        return chats.get_chats(user)
-    except Exception as exc:
-        raise HTTPException(*exc.args)
+    return chats.get_chats(user)
 
 
-@app.task(name="telegram:get_chat")
+@app.task(name="telegram:get_chats_name", max_retries=5)
+def get_chats_name_task(user):
+    return chats.get_chats_name(user)
+
+
+@app.task(name="telegram:get_chat", max_retries=5)
 def get_chat_task(user, chat_id: int):
-    try:
+    chat = chats.get_chat(user, chat_id)
+    if not chat:
+        # TDLib needs to have chats cached before getting a chat
+        _ = chats.get_chats(user)
         chat = chats.get_chat(user, chat_id)
-        if not chat:
-            # TDLib needs to have chats cached before getting a chat
-            _ = chats.get_chats(user)
-            chat = chats.get_chat(user, chat_id)
-        return chat
-    except Exception as exc:
-        raise HTTPException(*exc.args)
+    return chat
 
 
-@app.task(name="telegram:get_messages_task")
+@app.task(name="telegram:search_public_chats", max_retries=5)
+def search_public_chats_task(user, query: str):
+    return chats.search_public_chats(user, query)
+
+
+@app.task(name="telegram:search_public_chats_name", max_retries=5)
+def search_public_chats_name_task(user, query: str):
+    return chats.search_public_chats_name(user, query)
+
+
+@app.task(name="telegram:get_messages_task", max_retries=5)
 def get_messages_task(user, chat_id: int, limit: int | None = None) -> list[dict]:
-    try:
-        return messages.get_messages(user, chat_id, limit)
-    except Exception as exc:
-        raise HTTPException(*exc.args)
+    return messages.get_messages(user, chat_id, limit)
 
 
-@app.task(name="telegram:get_me_task")
+@app.task(name="telegram:get_me_task", max_retries=5)
 def get_me_task(user) -> list[dict]:
-    try:
-        return users.get_me(user)
-    except Exception as exc:
-        raise HTTPException(*exc.args)
+    return users.get_me(user)

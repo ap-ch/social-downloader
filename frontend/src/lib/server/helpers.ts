@@ -1,7 +1,7 @@
 import type { Cookies } from "@sveltejs/kit"
 
 export const getNewAccessToken = async (refreshToken: string) => {
-  const response = await fetch("http://api:8000/auth/refresh", {
+  let response = await fetch("http://api:8000/auth/refresh", {
     method: "post",
     headers: {
       "Authorization": `Bearer ${refreshToken}`
@@ -9,7 +9,7 @@ export const getNewAccessToken = async (refreshToken: string) => {
   }
   )
   if (response.ok) {
-    const jsonData = await response.json()
+    let jsonData = await response.json()
     return jsonData["access_token"]
   }
   else {

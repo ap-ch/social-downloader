@@ -8,11 +8,11 @@ import { userInfo } from "./routes/stores";
 
 export const handle = (async ({ event, resolve }) => {
 
-  const cookies = event.cookies;
-  const access_token = cookies.get("access_token");
-  const refresh_token = cookies.get("refresh_token");
+  let cookies = event.cookies;
+  let access_token = cookies.get("access_token");
+  let refresh_token = cookies.get("refresh_token");
 
-  const secret: jwt.Secret = SECRET;
+  let secret: jwt.Secret = SECRET;
 
   let userInfoValue: any;
 
@@ -33,14 +33,14 @@ export const handle = (async ({ event, resolve }) => {
 
   if (access_token != null && refresh_token != null) {
     try {
-      const decoded_rt: any = jwt.verify(refresh_token, secret);
-      const rt_expiration = new Date(decoded_rt.exp*1000);
+      let decoded_rt: any = jwt.verify(refresh_token, secret);
+      let rt_expiration = new Date(decoded_rt.exp*1000);
       try {
         jwt.verify(access_token, secret);
       }
       catch (err: any) {
         if (err.name == "TokenExpiredError") {
-          const newAccessToken = await getNewAccessToken(refresh_token);
+          let newAccessToken = await getNewAccessToken(refresh_token);
           cookies.set(
             "access_token",
             newAccessToken,
@@ -69,8 +69,8 @@ export const handle = (async ({ event, resolve }) => {
 }) satisfies Handle;
 
 export const handleFetch = (async ({ event, request, fetch }) => {
-  const cookies = event.cookies;
-  const access_token = cookies.get("access_token")
+  let cookies = event.cookies;
+  let access_token = cookies.get("access_token")
 
   if (access_token != null) {
     if (!request.url.startsWith('http://api:8000/auth')) {

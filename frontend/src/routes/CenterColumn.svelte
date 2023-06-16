@@ -72,6 +72,15 @@
         }
     };
 
+    $: if (serviceTasks.length > 0) {
+        clearInterval(interval);
+        interval = setInterval(refresh, 5000);
+    }
+    else {
+        clearInterval(interval);
+        interval = setInterval(refresh, 10000);
+    }
+
     let interval = setInterval(refresh, 10000);
 
     let downloadResult = async (task_id: string, task_detail: string) => {   
@@ -94,7 +103,7 @@
             a.click();
         })
         .catch(function(err) {
-            console.error(err)
+            console.error(err);
         })
     }
 
@@ -106,11 +115,11 @@
             }
         );
         if (response.ok) {
-            //document.getElementById(`task-row-${task_id}`)?.remove();
-            refresh();
+            let oldServiceValue = selectedServiceValue;
+            selectedService.set("");
+            selectedService.set(oldServiceValue);
         }
     }
-
 </script>
 
 <div class="col-6 g-0" style="padding-right: 2vh">
@@ -133,7 +142,7 @@
                         {#each serviceTasks as serviceTask, i}
                             <div id="task-row-{serviceTask["task_id"]}" class="row g-1">
                                 <div class="col-4">
-                                    <div class="container-fluid p-3 border border-dark rounded text-truncate" style="margin-bottom: 8px; text-align: left;">
+                                    <div title={serviceTask["task_detail"]} class="container-fluid p-3 border border-dark rounded text-truncate" style="margin-bottom: 8px; text-align: left;">
                                         <span>{i+1}. <code>{serviceTask["task_detail"]}</code></span>
                                     </div>
                                 </div>

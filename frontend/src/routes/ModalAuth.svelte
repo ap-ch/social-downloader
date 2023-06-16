@@ -46,16 +46,6 @@
 		return auth_method;
     }
 
-	const getAuthMethodPath = (auth_method: any) => {
-		let path: any = "";
-		try {
-			path = auth_method.path;
-		}
-		finally {
-			return path
-		}
-    }
-
 	const getAuthMethodParameters = (auth_method: any) => {
 		let parameters: any = [];
 		try {
@@ -63,6 +53,16 @@
 		}
 		finally {
 			return parameters
+		}
+    }
+
+	const isParamRequired = (parameter: any) => {
+		let isRequired: boolean = false;
+		try {
+			isRequired = parameter.required;
+		}
+		finally {
+			return isRequired
 		}
     }
 
@@ -105,7 +105,7 @@
 		);
 		if (response.ok) {
 			let auth_method = getAuthMethod(selectedAuthMethod);
-			let auth_method_path = getAuthMethodPath(auth_method);
+			let auth_method_path = auth_method.path;
 			params = `?res=/${selectedServiceValue}${auth_method_path}`
 			let response_login = await fetch(`/api/redirect-server${params}`, 
 				{
@@ -130,7 +130,7 @@
 	const serviceVerify = async (event: any) => {
 		const formData = new FormData(event.target);
 		const verificationCode = Object.fromEntries(formData.entries()).code;
-		let auth_method_path = getAuthMethodPath(getAuthMethod(selectedAuthMethod));
+		let auth_method_path = getAuthMethod(selectedAuthMethod).path;
 		const params = `?res=/${selectedServiceValue}${auth_method_path}&code=${verificationCode}`
 		const response = await fetch(`/api/redirect-server${params}`,
 			{
@@ -174,10 +174,10 @@
 					Authentication
 				</h2>
 				<div class="d-flex align-items-center py-4 bg-body-tertiary">
-					<div class="form-signin w-30 m-auto">
+					<div class="w-30 m-auto">
 						<form on:submit|preventDefault={(event) => {handleServiceAuthenticate(event); return false;}} method="POST">
 							{#each getAuthMethodParameters(getAuthMethod(selectedAuthMethod)) as parameter}
-								{#if parameter[1].required}
+								{#if isParamRequired(parameter[1])}
 									<div class="form-floating">
 										<input name={parameter[0]} type={parameter[1].type} class="form-control" id="floatingInput" required>
 										<label for="floatingInput">{parameter[1].name}</label>

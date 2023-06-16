@@ -7,7 +7,7 @@ def get_user(email: str) -> dict:
     if not user:
         return None
     user["id"] = str(user["_id"])
-    user["_id"] = None
+    user.pop('_id', None)
     return user
 
 

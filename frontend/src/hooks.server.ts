@@ -50,8 +50,6 @@ export const handle = (async ({ event, resolve }) => {
               expires: rt_expiration
             }
           );
-          console.log("Set new access token: " + newAccessToken);
-          console.log(rt_expiration);
         }
         else {
           logOut(cookies);

@@ -20,16 +20,18 @@ def get_user_tasks(user, task_type: str):
     all_user_tasks = db["tasks"].find_one(
         {"user_id": ObjectId(user["id"])}, 
         {"_id": 0, "user_id": 0}
-    )["tasks"]
-    type_tasks = [
-        {
-            "task_id": task["task_id"],
-            "task_detail": task["task_detail"],
-            "date_created": task["date_created"]
-        }
-        for task in all_user_tasks
-        if task["task_type"] == task_type
-    ]
+    )
+    type_tasks = []
+    if (all_user_tasks):
+        type_tasks = [
+            {
+                "task_id": task["task_id"],
+                "task_detail": task["task_detail"],
+                "date_created": task["date_created"]
+            }
+            for task in all_user_tasks["tasks"]
+            if task["task_type"] == task_type
+        ]
     return type_tasks
 
 def delete_user_task(user, task_id: str):

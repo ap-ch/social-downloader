@@ -94,9 +94,12 @@
             return response.json()
         })
         .then(json => {
-            var data = "text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(json, null, 4));
+            let data = JSON.stringify(json, null, 4);
+            let blob = new Blob([data], {
+                type: 'application/json'
+            });
             let a = document.createElement('a');
-            a.href = "data:" + data;
+            a.href = URL.createObjectURL(blob);
             let today = new Date();
             let todayText = today.toISOString().replaceAll(":", "-").slice(0, 19)
             a.download = `${selectedServiceValue}-${task_detail}-result-${todayText}.json`;

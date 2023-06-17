@@ -16,3 +16,5 @@ frontend/.vercel
 frontend/.output
 frontend/vite.config.js.timestamp-*
 frontend/vite.config.ts.timestamp-*
+
+*.log

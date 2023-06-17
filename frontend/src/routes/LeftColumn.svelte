@@ -8,7 +8,9 @@
     
     services.subscribe((value: any) => {
         servicesValue = value;
-        serviceEntries = Object.entries(value);
+        if (value) {
+            serviceEntries = Object.entries(value);
+        }
     });
 
     selectedService.subscribe(value => {
@@ -34,7 +36,6 @@
                 document.getElementById(`${service}-button`)?.classList.add('text-white');
             }
         }
-
 	};
 
     const getServiceAuthentication = (service: string) => {
@@ -66,26 +67,34 @@
             {/each}
         </div>
     </div>
-    {#if getServiceAuthentication(selectedServiceValue)}
-        {#if (userPrefsValue == null || !(`${selectedServiceValue}_login` in userPrefsValue))}
-            <div class="bg-light rounded shadow-sm" style="height: 8vh; margin-top: 2vh;">
-                <button class="container-fluid p-3 btn btn-outline-primary shadow-sm text-center" on:click={() => {}} style="text-align: left; height: 100%;">
-                    <h5 style="margin-bottom: 0px;"><span>Service needs authentication<span></span></h5>
-                </button>
-            </div>
+    {#if selectedServiceValue == ""}
+        <div class="bg-light rounded shadow-sm" style="height: 8vh; margin-top: 2vh;">
+            <button disabled class="container-fluid p-3 btn btn-disabled shadow-sm text-center" on:click={() => {}} style="text-align: left; height: 100%;">
+                <h5 style="margin-bottom: 0px;"><span>No Service Selected<span></span></h5>
+            </button>
+        </div>
+    {:else}
+        {#if getServiceAuthentication(selectedServiceValue)}
+            {#if (userPrefsValue == null || !(`${selectedServiceValue}_login` in userPrefsValue))}
+                <div class="bg-light rounded shadow-sm" style="height: 8vh; margin-top: 2vh;">
+                    <button class="container-fluid p-3 btn btn-outline-danger shadow-sm text-center" on:click={() => {}} style="text-align: left; height: 100%;">
+                        <h5 style="margin-bottom: 0px;"><i class="bi bi-door-closed" style="margin-right: 8px"></i><span>Authentication needed<span></span></h5>
+                    </button>
+                </div>
+            {:else}
+                <div class="bg-light rounded shadow-sm" style="height: 8vh; margin-top: 2vh;">
+                    <button class="container-fluid p-3 btn btn-outline-primary shadow-sm text-center" on:click={() => {}} style="text-align: left; height: 100%;">
+                        <h5 style="margin-bottom: 0px;"><i class="bi bi-key" style="margin-right: 8px"></i><span>Service Authenticated<span></span></h5>
+                    </button>
+                </div>
+            {/if}
         {:else}
             <div class="bg-light rounded shadow-sm" style="height: 8vh; margin-top: 2vh;">
-                <button class="container-fluid p-3 btn btn-outline-primary shadow-sm text-center" on:click={() => {}} style="text-align: left; height: 100%;">
-                    <h5 style="margin-bottom: 0px;"><i class="bi bi-door-open" style="margin-right: 8px"></i><span>Log out Service<span></span></h5>
+                <button disabled class="container-fluid p-3 btn btn-disabled shadow-sm text-center" on:click={() => {}} style="text-align: left; height: 100%;">
+                    <h5 style="margin-bottom: 0px;"><i class="bi bi-key" style="margin-right: 8px"></i><span>No Authentication needed<span></span></h5>
                 </button>
             </div>
         {/if}
-    {:else}
-        <div class="bg-light rounded shadow-sm" style="height: 8vh; margin-top: 2vh;">
-            <button disabled class="container-fluid p-3 btn btn-disabled shadow-sm text-center" on:click={() => {}} style="text-align: left; height: 100%;">
-                <h5 style="margin-bottom: 0px;"><i class="bi bi-door-closed" style="margin-right: 8px"></i><span>No Log in needed<span></span></h5>
-            </button>
-        </div>
     {/if}
 </div>
 {/if}

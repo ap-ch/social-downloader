@@ -7,10 +7,10 @@ This is a full-stack application that lets the user download content easily from
 - Authentication with OAuth2, using a bearer type token
 - Backend written in Python using the FastAPI framework
 - Long-term persistence of data per user with MongoDB
-- Queuing of jobs per service with Celery and RabbitMQ
+- Queuing of jobs per service with Celery and Redis
 - Automatic handling of pagination
 - Custom preferences per user
-- Frontend using the SvelteKit framework (WIP)
+- Frontend using the SvelteKit framework
 
 ## Services Available
 ### Telegram
@@ -19,7 +19,7 @@ Using the Telegram service, you can get:
 - Your chats
 - A chat given its ID
 - All messages or N messages of a chat given its ID
-- More to be added
+- Search public chats (groups, channels...)
 
 Moreover, the user can change the `telegram_login` preferences to switch the Telegram account they are using by setting a different phone number or bot token. Each Telegram account has a different cache directory so conflicts won't occur.
 
@@ -36,3 +36,4 @@ Moreover, the user can change the `telegram_login` preferences to switch the Tel
 - Port 4000 is mapped for the backend. To make requests use this port
 - Port 8000 is mapped for the frontend. You should see the default SvelteKit app for the time being
 - Port 27017 is mapped for the database. You can connect to the database and query data using this port
+- Port 5555 is for the queues' monitors with Flower
